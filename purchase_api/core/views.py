@@ -1,8 +1,7 @@
 from django.core.mail import send_mail
 from decimal import Decimal
-from rest_framework.views import APIView
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework import status
 from .models import Order, OrderItem, Product
 from .serializers import OrderSerializer
 from django.contrib.auth import get_user_model
@@ -10,8 +9,16 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class CreateOrderView(APIView):
+class CreateOrderView(generics.CreateAPIView):
+    """
+    Создание заказа.
+    Наследуем от CreateAPIView, чтобы drf-spectacular мог автоматически
+    построить OpenAPI-схему. Логика создания вынесена в post().
+    """
+    serializer_class = OrderSerializer
+
     def post(self, request, *args, **kwargs):
+
         product_id = request.data.get('product')
         quantity = request.data.get('quantity', 1)
 
@@ -25,6 +32,7 @@ class CreateOrderView(APIView):
             product = Product.objects.get(id=product_id)
             price = product.price
         except (Product.DoesNotExist, ValueError):
+            # Заглушка для теста
             price = Decimal('50000.00')
             product = None
 
@@ -32,6 +40,7 @@ class CreateOrderView(APIView):
 
         current_user = request.user
 
+        # Логика для теста: если нет авторизованного пользователя, берём первого из БД
         if not current_user or not current_user.is_authenticated:
             try:
                 current_user = User.objects.first()
@@ -79,4 +88,3 @@ class CreateOrderView(APIView):
 
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-

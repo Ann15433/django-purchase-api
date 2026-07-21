@@ -8,7 +8,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = serializers.ListSerializer(child=OrderItemSerializer(), read_only=True)
+    items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
@@ -21,4 +21,4 @@ class OrderSerializer(serializers.ModelSerializer):
             'delivery_address',
             'items',
         ]
-        read_only_fields = ['created_at', 'total_price']
+        read_only_fields = ['created_at', 'total_price', 'items']
