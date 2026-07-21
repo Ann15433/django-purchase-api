@@ -40,7 +40,6 @@ class CreateOrderView(generics.CreateAPIView):
 
         current_user = request.user
 
-        # Логика для теста: если нет авторизованного пользователя, берём первого из БД
         if not current_user or not current_user.is_authenticated:
             try:
                 current_user = User.objects.first()
