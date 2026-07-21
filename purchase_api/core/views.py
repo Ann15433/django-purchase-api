@@ -25,7 +25,6 @@ class CreateOrderView(APIView):
             product = Product.objects.get(id=product_id)
             price = product.price
         except (Product.DoesNotExist, ValueError):
-            # Если товара с таким ID нет или передали не число, ставим заглушку
             price = Decimal('50000.00')
             product = None
 
