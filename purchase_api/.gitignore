@@ -12,7 +12,6 @@ venv/
 *.sqlite3
 db.sqlite3
 
-# Статика и медиа (если собираешь через collectstatic)
 staticfiles/
 media/
 
